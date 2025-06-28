@@ -106,10 +106,10 @@ export default function Quiz() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("USERS")
-      .update({ scores: score })
-      .eq("phone", phone);
+  const { data, error } = await supabase
+    .from("USERS")
+    .update({ scores: score })
+    .eq("phone", phone);
 
     if (error) {
       console.error("Erro ao salvar score:", error.message);

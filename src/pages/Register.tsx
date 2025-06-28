@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 
@@ -19,7 +19,6 @@ export default function App() {
       return
     }
 
-    // Verifica se já existe
     const { data: existingUser, error: checkError } = await supabase
       .from('USERS')
       .select('phone')
@@ -49,8 +48,7 @@ export default function App() {
       return
     }
 
-    // Salva telefone no localStorage para usar depois no quiz
-    localStorage.setItem('phone', rawPhone.replace(/\D/g, ''))
+    localStorage.setItem("phone", rawPhone)
     navigate('/quiz')
   }
 
@@ -79,52 +77,77 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4">
-      <motion.h1
-        className="text-5xl font-extrabold text-red-600 mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        Quiz England
-      </motion.h1>
-
-      <motion.form
-        onSubmit={handleSubmit}
-        className="bg-gray-100 p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-4 border-t-4 border-red-600"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        <input
-          type="text"
-          placeholder="Seu nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-          required
-        />
-
-        <input
-          type="tel"
-          placeholder="Número de celular (XX)9XXXX-XXXX"
-          value={phone}
-          onChange={handlePhoneChange}
-          className={`w-full p-3 rounded-xl border ${
-            error ? 'border-red-500' : 'border-gray-300'
-          } focus:outline-none focus:ring-2 focus:ring-red-500`}
-          required
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full bg-red-600 text-white p-3 rounded-xl font-semibold hover:bg-red-700 transition"
+      <AnimatePresence>
+        <motion.h1
+          key="title"
+          className="text-5xl font-extrabold text-red-600 mb-8"
+          initial={{ opacity: 0, y: -30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          Play
-        </motion.button>
-      </motion.form>
+          Quiz England
+        </motion.h1>
+
+        <motion.form
+          key="form"
+          onSubmit={handleSubmit}
+          className="bg-gray-100 p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-4 border-t-4 border-red-600"
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+        >
+          <motion.input
+            type="text"
+            placeholder="Seu nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+            required
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+          />
+
+          <motion.input
+            type="tel"
+            placeholder="Número de celular (XX)9XXXX-XXXX"
+            value={phone}
+            onChange={handlePhoneChange}
+            className={`w-full p-3 rounded-xl border ${
+              error ? 'border-red-500' : 'border-gray-300'
+            } focus:outline-none focus:ring-2 focus:ring-red-500`}
+            required
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+          />
+
+          {error && (
+            <motion.p
+              className="text-red-500 text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.55 }}
+            >
+              {error}
+            </motion.p>
+          )}
+
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full bg-red-600 text-white p-3 rounded-xl font-semibold hover:bg-red-700 transition"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            Play
+          </motion.button>
+        </motion.form>
+      </AnimatePresence>
     </div>
   )
 }
